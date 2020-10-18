@@ -1,7 +1,34 @@
+
+<h3>Add new person</h3>
+<form method="POST" action="/person/add">
+    <input type="text" name="name" placeholder="Name">
+    <input type="submit" value="Submit">
+</form>
+
+
+<h3>Add new location</h3>
+<form method="POST" action="/location/add">
+    <input type="text" name="city" placeholder="City">
+    <input type="text" name="state" placeholder="State">
+
+    <input type="submit" value="Submit">
+</form>
+
+<h3>People</h3>
 <ul>
 
     <% persons.forEach((person) => { %>
         <li><%= person.name %> </li>
+    <% }) %>
+
+</ul>
+
+
+<h3>Locations</h3>
+<ul>
+
+    <% locations.forEach((location) => { %>
+        <li><%= location.city %>, <%= location.state %>  </li>
     <% }) %>
 
 </ul>

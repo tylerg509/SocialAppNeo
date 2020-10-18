@@ -19,10 +19,11 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 const driver = neo4j.driver('bolt://localhost', neo4j.auth.basic(local.user, local.password))
-const session = driver.session()
 
 // home route
 app.get('/', (req, res) => {
+    const session = driver.session()
+
     session
         .run("MATCH (n: Person) RETURN n")
         .then((result) => {
@@ -34,15 +35,62 @@ app.get('/', (req, res) => {
                     name: item._fields[0].properties.name
                 })
             })
-            res.render('index', {
-                persons: personArr
-            })
+
+            session
+                .run("MATCH (n:Location) RETURN n")
+                .then((result2) => {
+                    let locationArr = [];
+                    result2.records.forEach(item =>{
+                        locationArr.push(item._fields[0].properties)
+                    })
+
+                    res.render('index', {
+                        persons: personArr,
+                        locations: locationArr
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                })
 
         })
         .catch( err => {
             console.log(err)
         })
         
+})
+
+// add person route
+app.post('/person/add', (req, res) => {
+    const name = req.body.name;
+    const session = driver.session()
+
+    session
+        .run("CREATE(n:Person {name: $nameParam}) RETURN n.name", {nameParam:name})
+        .then((result) => {
+            res.redirect('/')
+            session.close()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+})
+
+// add location route
+app.post('/location/add', (req, res) => {
+    const city = req.body.city;
+    const state = req.body.state;
+    const session = driver.session()
+
+    session
+        .run("CREATE(n:Location {city: $cityParam, state: $stateParam}) RETURN n", {cityParam:city, stateParam: state})
+        .then((result) => {
+            res.redirect('/')
+            session.close()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
 })
 
 app.listen(3000)
