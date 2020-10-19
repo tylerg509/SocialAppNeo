@@ -93,6 +93,24 @@ app.post('/location/add', (req, res) => {
         })
 })
 
+// friends connect route
+app.post('/friends/connect', (req, res) => {
+    const name1 = req.body.name1;
+    const name2 = req.body.name2;
+    const session = driver.session()
+
+    session
+        .run("MATCH(a: Person {name: $nameParam1}), (b:Person {name:$nameParam2}) MERGE(a)-[r:Friends]->(b) RETURN a,b", {nameParam1: name1, nameParam2:name2} )
+        .then((result) => {
+            res.redirect('/')
+            session.close()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+})
+
+
 app.listen(3000)
 
 console.log(
