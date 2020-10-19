@@ -1,11 +1,28 @@
-<%= name %>
+<% include ../views/partials/header %>
+<a href="/">Go Back</a>
+<h1>
+    <i class="fa fa-user">
+        <%= name %>
+    </i>
+</h1>
 
-Birthplace: <%=city %>, <%= state %>
+<%if (city) { %>
+    <h4>
+        <i class="fa fa-map-marker"></i>
+        <i> 
+            Birthplace: <%=city %>, <%= state %>
+        </i>
+    </h4>
+<% } %>
 
-<ul>
 
-    <% friends.forEach((person) => { %>
-        <li> <a href="/person/<%= person.id %>"><%= person.name %></a>  </li>
-    <% }) %>
+<%if (friends.length > 0) { %>
+    <ul class="list-group">
+        <% friends.forEach((person) => { %>
+            <li class="list-group-item"> <a href="/person/<%= person.id %>"><%= person.name %></a>  </li>
+        <% }); %>
 
-</ul>
+    </ul>
+<% } %>
+
+<% include ../views/partials/footer %>

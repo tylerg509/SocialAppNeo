@@ -146,14 +146,14 @@ app.get('/person/:id', (req,res) => {
                     const state = result2.records[0].get("state");
 
                     session
-                    .run("OPTIONAL MATCH (a: Person)-[r: friends]-(b:Person) WHERE id(a)=toInteger($idParam) RETURN b", {idParam: id} )
+                    .run("OPTIONAL MATCH (a: Person)-[r: Friends]-(b:Person) WHERE id(a)=toInteger($idParam) RETURN b", {idParam: id} )
                     .then((result3) => {
                         const friendsArr = [];
                         result3.records.forEach(item => {
                             if(item._fields[0] != null) {
                                 friendsArr.push({
-                                    id: records._fields[0].identity.low,
-                                    name: records._fields[0].properties.name
+                                    id: item._fields[0].identity.low,
+                                    name: item._fields[0].properties.name
                                 })
                             }
                         })
