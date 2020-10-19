@@ -110,6 +110,25 @@ app.post('/friends/connect', (req, res) => {
         })
 })
 
+// birthplace add connect route
+app.post('/person/born/add', (req, res) => {
+    const name = req.body.name;
+    const city = req.body.city;
+    const state = req.body.state;
+    const year = req.body.year;
+    const session = driver.session()
+
+    session
+        .run("MATCH(a: Person {name: $nameParam}), (b:Location {city:$cityParam, state: $stateParam}) MERGE(a)-[r:Born_In {year:$yearParam}]->(b) RETURN a,b", {nameParam: name, cityParam:city, stateParam: state,  yearParam: year} )
+        .then((result) => {
+            res.redirect('/')
+            session.close()
+        })
+        .catch((error) => {
+            console.log(error)
+        })
+})
+
 
 app.listen(3000)
 
