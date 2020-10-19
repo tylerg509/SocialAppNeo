@@ -129,6 +129,55 @@ app.post('/person/born/add', (req, res) => {
         })
 })
 
+// person route
+app.get('/person/:id', (req,res) => {
+    const id = req.params.id;
+    const session = driver.session()
+
+    session
+        .run("MATCH(a: Person) WHERE id(a)=toInteger($idParam) RETURN a.name as name", {idParam: id})
+        .then((result) => {
+            const name = result.records[0].get("name");
+
+            session
+                .run("OPTIONAL MATCH (a:Person)-[r:Born_In]-(b:Location) WHERE id(a)=toInteger($idParam) RETURN b.city as city, b.state as state", {idParam: id})
+                .then((result2) => {
+                    const city = result2.records[0].get("city");
+                    const state = result2.records[0].get("state");
+
+                    session
+                    .run("OPTIONAL MATCH (a: Person)-[r: friends]-(b:Person) WHERE id(a)=toInteger($idParam) RETURN b", {idParam: id} )
+                    .then((result3) => {
+                        const friendsArr = [];
+                        result3.records.forEach(item => {
+                            if(item._fields[0] != null) {
+                                friendsArr.push({
+                                    id: records._fields[0].identity.low,
+                                    name: records._fields[0].properties.name
+                                })
+                            }
+                        })
+    
+                        res.render('person', {
+                            id: id,
+                            name: name,
+                            city: city,
+                            state: state,
+                            friends: friendsArr
+                        })
+    
+                        session.close()
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+                })
+
+
+
+
+        })
+})
 
 app.listen(3000)
 

@@ -38,7 +38,7 @@
 <ul>
 
     <% persons.forEach((person) => { %>
-        <li><%= person.name %> </li>
+        <li> <a href="/person/<%= person.id %>"><%= person.name %></a>  </li>
     <% }) %>
 
 </ul>

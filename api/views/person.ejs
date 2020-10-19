@@ -1,0 +1,11 @@
+<%= name %>
+
+Birthplace: <%=city %>, <%= state %>
+
+<ul>
+
+    <% friends.forEach((person) => { %>
+        <li> <a href="/person/<%= person.id %>"><%= person.name %></a>  </li>
+    <% }) %>
+
+</ul>
