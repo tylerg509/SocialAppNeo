@@ -97,13 +97,22 @@ app.post('/location/add', (req, res) => {
 app.post('/friends/connect', (req, res) => {
     const name1 = req.body.name1;
     const name2 = req.body.name2;
+    const id = req.body.id;
     const session = driver.session()
 
     session
         .run("MATCH(a: Person {name: $nameParam1}), (b:Person {name:$nameParam2}) MERGE(a)-[r:Friends]->(b) RETURN a,b", {nameParam1: name1, nameParam2:name2} )
         .then((result) => {
-            res.redirect('/')
+            if (id && id!= null) {
+                res.redirect(`/person/${id}`)
+
+            } else {
+                res.redirect('/')
+            }
+
             session.close()
+
+
         })
         .catch((error) => {
             console.log(error)
@@ -116,12 +125,20 @@ app.post('/person/born/add', (req, res) => {
     const city = req.body.city;
     const state = req.body.state;
     const year = req.body.year;
+    const id = req.body.id;
+
     const session = driver.session()
 
     session
         .run("MATCH(a: Person {name: $nameParam}), (b:Location {city:$cityParam, state: $stateParam}) MERGE(a)-[r:Born_In {year:$yearParam}]->(b) RETURN a,b", {nameParam: name, cityParam:city, stateParam: state,  yearParam: year} )
         .then((result) => {
-            res.redirect('/')
+            if (id && id!= null) {
+                res.redirect(`/person/${id}`)
+
+            } else {
+                res.redirect('/')
+            }
+
             session.close()
         })
         .catch((error) => {
